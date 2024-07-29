@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,13 +6,13 @@ public class PlayQuit : MonoBehaviour
 
     public void Entergame()
     {
- 
-   SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-
+        SceneManager.LoadScene("Game");
     }
 
     public void Quitgame()
     {
+        Debug.Log("Quit");
         Application.Quit();
+        Debug.Log("Afterquit");
     }
 }
