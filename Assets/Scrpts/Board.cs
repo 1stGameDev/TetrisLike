@@ -43,4 +43,11 @@ public class Board : MonoBehaviour
             Tilemap.SetTile(tilePosition, piece.Data.tile);
         }
     }
+
+
+    //For moving the pices:
+    void Update(){
+        Tilemap.ClearAllTiles();
+        Set(CurrentPiece);
+    }
 }
