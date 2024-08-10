@@ -8,9 +8,9 @@ public class PauseScript : MonoBehaviour
     //Lets me refer to the panel in this script
     public GameObject PausePanel;
 
-    public static bool GameIsPaused;
+    private static bool GameIsPaused;
 
-    public static bool canPause;
+    private static bool canPause;
    
    //When the game starts the canvas is not active, meaning it is invisible
    void Start()
