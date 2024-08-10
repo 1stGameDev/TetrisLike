@@ -8,6 +8,7 @@ public class Piece : MonoBehaviour
     public Vector3Int Position; //{ get; private set; }
     public TetrominoData Data { get; private set; }
     public Vector3Int[] Cells { get; private set; }
+    
 
 
 
@@ -18,6 +19,8 @@ public class Piece : MonoBehaviour
     private bool canLeft = true;
     private bool canDown = true;
     private bool canHardDown = true;
+    private int lockCount = 0;
+    private bool isLocked = false;
 
     public void Initialize(Board board, Vector3Int position, TetrominoData data)
     {
@@ -36,62 +39,83 @@ public class Piece : MonoBehaviour
 
     void Update(){
         //Before moving the piece in any way, it clears it from the board. This way the piece won't "colide" with itself.
-        this.Board.Clear(this);
+        if(!isLocked){
+            this.Board.Clear(this);
 
 
-        Fall(Time.deltaTime);
+            int fall = Fall(Time.deltaTime);
+            if(fall == 0){
+                lockCount++;
+            }
+            else if(fall == 1){
+                lockCount--;
+            }
 
-        //Second try to move the pieces sideways (without using Unity's new Input system)
-        if(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)){
-            //Same as with the pause menu.
-            //It checks if it has moved in the same key-press.
-            if(canRight){
-                Right();
+            //Second try to move the pieces sideways (without using Unity's new Input system)
+            if(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)){
+                //Same as with the pause menu.
+                //It checks if it has moved in the same key-press.
+                if(canRight){
+                    Right();
+                }
+                canRight = false;
             }
-            canRight = false;
-        }
-        else{
-            canRight = true;
-        }
-        if(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)){
-            if(canLeft){
-                Left();
+            else{
+                canRight = true;
             }
-            canLeft = false;
-        }
-        else{
-            canLeft = true;
-        }
-        if(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)){
-            if(canDown){
-                Down();
+            if(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)){
+                if(canLeft){
+                    Left();
+                }
+                canLeft = false;
             }
-            canDown = false;            
-        }
-        else{
-            canDown = true;
-        }
-        if(Input.GetKey(KeyCode.Space)){
-            if(canHardDown){
-                HardDown();
+            else{
+                canLeft = true;
             }
-            canHardDown = false;
-        }
-        else{
-            canHardDown = true;
-        }
+            if(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)){
+                if(canDown){
+                    Down();
+                }
+                canDown = false;            
+            }
+            else{
+                canDown = true;
+            }
+            if(Input.GetKey(KeyCode.Space)){
+                if(canHardDown){
+                    HardDown();
+                }
+                canHardDown = false;
+            }
+            else{
+                canHardDown = true;
+            }
 
-        //Now that we have moved (or not) the piece, it draws it in the board.
-        this.Board.Set(this);
+            //Now that we have moved (or not) the piece, it draws it in the board.
+            this.Board.Set(this);
+
+            if(lockCount >= 2){
+                isLocked = true;
+            }
+        }
     }
 
     //Works the same as the movement but with the added feature of the delta.
     //delta controls how quicly it falls.
-    private void Fall(float delta){
+    private int Fall(float delta){
         timer += delta;
         if(timer >= fallTime){
-            Down();
+            bool ret = Down();
             timer = 0.0f;
+            if(ret){
+                return 1;
+            }
+            else{
+                return 0;
+            }
+        }
+        else{
+            return 2;
         }
     }
 
