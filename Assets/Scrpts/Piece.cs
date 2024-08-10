@@ -16,6 +16,8 @@ public class Piece : MonoBehaviour
     private float timer = 0.0f;
     private bool canRight = true;
     private bool canLeft = true;
+    private bool canDown = true;
+    private bool canHardDown = true;
 
     public void Initialize(Board board, Vector3Int position, TetrominoData data)
     {
@@ -60,6 +62,24 @@ public class Piece : MonoBehaviour
         else{
             canLeft = true;
         }
+        if(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)){
+            if(canDown){
+                Down();
+            }
+            canDown = false;            
+        }
+        else{
+            canDown = true;
+        }
+        if(Input.GetKey(KeyCode.Space)){
+            if(canHardDown){
+                HardDown();
+            }
+            canHardDown = false;
+        }
+        else{
+            canHardDown = true;
+        }
 
         //Now that we have moved (or not) the piece, it draws it in the board.
         this.Board.Set(this);
@@ -70,12 +90,26 @@ public class Piece : MonoBehaviour
     private void Fall(float delta){
         timer += delta;
         if(timer >= fallTime){
-            Vector3Int newpos = new Vector3Int(Position.x, Position.y - 1, Position.z);
-            if(this.Board.IsValidPosition(this, newpos)){
-                Position = newpos;
-            }
+            Down();
             timer = 0.0f;
         }
+    }
+
+
+    private void HardDown(){
+        while(Down()){
+
+        }
+    }
+    private bool Down(){
+        Vector3Int newpos = new Vector3Int(Position.x, Position.y - 1, Position.z);
+            if(this.Board.IsValidPosition(this, newpos)){
+                Position = newpos;
+                return true;
+            }
+            else{
+                return false;
+            }
     }
 
     private void Right(){
