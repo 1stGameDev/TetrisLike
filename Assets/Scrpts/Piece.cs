@@ -33,11 +33,11 @@ public class Piece : MonoBehaviour
 
 
     void Update(){
-        timer += Time.deltaTime;
-        if(timer >= fallTime){
-            Position = new Vector3Int(Position.x, Position.y - 1, Position.z);
-            timer = 0.0f;
-        }
+        //Before moving the piece in any way, it clears it from the board. This way the piece won't "colide" with itself.
+        this.Board.Clear(this);
+
+
+        Fall(Time.deltaTime);
 
         //Second try to move the pieces sideways (without using Unity's new Input system)
         if(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)){
@@ -60,14 +60,36 @@ public class Piece : MonoBehaviour
         else{
             canLeft = true;
         }
+
+        //Now that we have moved (or not) the piece, it draws it in the board.
+        this.Board.Set(this);
     }
 
+    //Works the same as the movement but with the added feature of the delta.
+    //delta controls how quicly it falls.
+    private void Fall(float delta){
+        timer += delta;
+        if(timer >= fallTime){
+            Vector3Int newpos = new Vector3Int(Position.x, Position.y - 1, Position.z);
+            if(this.Board.IsValidPosition(this, newpos)){
+                Position = newpos;
+            }
+            timer = 0.0f;
+        }
+    }
 
     private void Right(){
-        Position = new Vector3Int(Position.x + 1, Position.y, Position.z);
+        //Checks if the piece would collide with the limits, bottom or another piece. If it doesn't, it moves.
+        Vector3Int newpos = new Vector3Int(Position.x + 1, Position.y, Position.z);
+        if(this.Board.IsValidPosition(this, newpos)){
+            Position = newpos;
+        }
     }
 
     private void Left(){
-        Position = new Vector3Int(Position.x - 1, Position.y, Position.z);
+        Vector3Int newpos = new Vector3Int(Position.x - 1, Position.y, Position.z);
+        if(this.Board.IsValidPosition(this, newpos)){
+            Position = newpos;
+        }
     }
 }
