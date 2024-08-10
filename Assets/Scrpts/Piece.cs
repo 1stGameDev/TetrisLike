@@ -34,6 +34,16 @@ public class Piece : MonoBehaviour
         {
             Cells[i] = (Vector3Int)data.Cells[i];
         }
+
+        timer = 0.0f;
+        canRight = true;
+        canLeft = true;
+        canDown = true;
+        canHardDown = true;
+        lockCount = 0;
+        isLocked = false;
+
+
     }
 
 
@@ -49,6 +59,9 @@ public class Piece : MonoBehaviour
             }
             else if(fall == 1){
                 lockCount--;
+                if(lockCount < 0){
+                    lockCount = 0;
+                }
             }
 
             //Second try to move the pieces sideways (without using Unity's new Input system)
@@ -96,6 +109,7 @@ public class Piece : MonoBehaviour
 
             if(lockCount >= 2){
                 isLocked = true;
+                this.Board.SpawnPiece();
             }
         }
     }
