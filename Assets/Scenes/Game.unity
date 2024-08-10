@@ -267,7 +267,6 @@ GameObject:
   - component: {fileID: 83526806}
   - component: {fileID: 83526808}
   - component: {fileID: 83526807}
-  - component: {fileID: 83526809}
   m_Layer: 5
   m_Name: PausePanel
   m_TagString: Untagged
@@ -336,19 +335,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 83526805}
   m_CullTransparentMesh: 1
---- !u!114 &83526809
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 83526805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfc65cdbbadcbe44896920f8654290db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PausePanel: {fileID: 83526805}
 --- !u!1 &102134332
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,7 +347,6 @@ GameObject:
   - component: {fileID: 102134336}
   - component: {fileID: 102134335}
   - component: {fileID: 102134334}
-  - component: {fileID: 102134337}
   m_Layer: 5
   m_Name: MainMenuButton
   m_TagString: Untagged
@@ -433,7 +418,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 102134337}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PauseScript, Assembly-CSharp
         m_MethodName: gotoMainMenu
         m_Mode: 1
@@ -483,19 +468,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 102134332}
   m_CullTransparentMesh: 1
---- !u!114 &102134337
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 102134332}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfc65cdbbadcbe44896920f8654290db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PausePanel: {fileID: 83526805}
 --- !u!1 &116946032
 GameObject:
   m_ObjectHideFlags: 0
@@ -608,9 +580,9 @@ GameObject:
   m_Component:
   - component: {fileID: 210175080}
   - component: {fileID: 210175079}
-  - component: {fileID: 210175083}
   - component: {fileID: 210175081}
   - component: {fileID: 210175082}
+  - component: {fileID: 261517144}
   m_Layer: 0
   m_Name: Game Board
   m_TagString: Untagged
@@ -688,7 +660,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Position: {x: 0, y: 0, z: 0}
   fallTime: 1
---- !u!114 &210175083
 --- !u!1 &261517142
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,8 +671,6 @@ GameObject:
   - component: {fileID: 261517143}
   - component: {fileID: 261517146}
   - component: {fileID: 261517145}
-  - component: {fileID: 261517144}
-  - component: {fileID: 261517147}
   m_Layer: 5
   m_Name: ResumeButton
   m_TagString: Untagged
@@ -756,59 +725,9 @@ MonoBehaviour:
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: 
+  m_DefaultActionMap: Game
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
-  m_GameObject: {fileID: 261517142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 261517145}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 261517147}
-        m_TargetAssemblyTypeName: PauseScript, Assembly-CSharp
-        m_MethodName: Resume
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &261517145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -847,19 +766,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 261517142}
   m_CullTransparentMesh: 1
---- !u!114 &261517147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 261517142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfc65cdbbadcbe44896920f8654290db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PausePanel: {fileID: 83526805}
 --- !u!1 &301360270
 GameObject:
   m_ObjectHideFlags: 0
@@ -872,7 +778,6 @@ GameObject:
   - component: {fileID: 301360275}
   - component: {fileID: 301360274}
   - component: {fileID: 301360273}
-  - component: {fileID: 301360272}
   m_Layer: 5
   m_Name: Exitbutton
   m_TagString: Untagged
@@ -900,18 +805,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0.39905, y: -101}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &301360272
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 301360270}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 241a04e6db79e6f499a6dc6b4421bd3d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &301360273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -956,7 +849,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 301360272}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlayQuit, Assembly-CSharp
         m_MethodName: Quitgame
         m_Mode: 1
