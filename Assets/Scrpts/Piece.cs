@@ -14,19 +14,16 @@ public class Piece : MonoBehaviour
 
 
     //For moving the pice:
+    private float moveTime = 0.1f;
+    private float moveTimer;
     public float fallTime;
     private float fallTimer;
-    private bool canRight;
-    private bool canLeft;
-    private bool canDown;
-    private bool canHardDown;
     private float lockTime;
     public float lockLimit;
     private bool isLocked;
 
     //For rotations
     private int rotationIndex;
-    private bool canRotate;
 
     public void Initialize(Board board, Vector3Int position, TetrominoData d)
     {
@@ -41,17 +38,12 @@ public class Piece : MonoBehaviour
             Cells[i] = (Vector3Int)data.Cells[i];
         }
 
+        moveTimer = 0.0f;
         fallTimer = 0.0f;
-        canRight = true;
-        canLeft = true;
-        canDown = true;
-        canHardDown = true;
-        isLocked = false;
         lockTime = 0.0f;
         lockLimit = 0.5f;
 
         rotationIndex = 0;
-        canRotate = true;
 
     }
 
@@ -64,67 +56,46 @@ public class Piece : MonoBehaviour
             //If the time since the last Fall is greater than fallTime, it falls.
             fallTimer += Time.deltaTime;
             lockTime += Time.deltaTime;
+            moveTimer += Time.deltaTime;
             if(fallTimer >= fallTime)
             {
                 Fall();
             }
 
-            //Second try to move the pieces sideways (without using Unity's new Input system)
-            if(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)){
-                //Same as with the pause menu.
-                //It checks if it has moved in the same key-press.
-                if(canRight){
-                    Move(new Vector2Int(1, 0));
-                }
-                canRight = false;
-            }
-            else{
-                canRight = true;
-            }
-            if(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)){
-                if(canLeft){
-                    Move(new Vector2Int(-1, 0));
-                }
-                canLeft = false;
-            }
-            else{
-                canLeft = true;
-            }
-            if(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)){
-                if(canDown){
-                    Move(new Vector2Int(0, -1));
-                }
-                canDown = false;            
-            }
-            else{
-                canDown = true;
-            }
-            if(Input.GetKey(KeyCode.Space)){
-                if(canHardDown){
-                    HardDown();
-                }
-                canHardDown = false;
-            }
-            else{
-                canHardDown = true;
-            }
-            if(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)){
-                if(canRotate)
-                {
-                    Rotate(1);
-                }
-                canRotate = false;
-            }
-            else{
-                canRotate = true;
-            }
+            if(moveTimer >= moveTime){
+                CheckMovements();
+            }            
             
-            
+            if(Input.GetKeyDown(KeyCode.Space)){
+                HardDown();
+            }
+
+            if(Input.GetKeyDown(KeyCode.W)||Input.GetKeyDown(KeyCode.UpArrow)){
+                Rotate(1);
+            }
+
             //Now that we have moved (or not) the piece, it draws it in the board.
             this.Board.Set(this);
         }
     }
 
+    private void CheckMovements(){
+
+        if(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)){
+            //Same as with the pause menu.
+            //It checks if it has moved in the same key-press.
+            Move(new Vector2Int(1,0));
+        }
+        if(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)){
+            Move(new Vector2Int(-1, 0));
+        }
+        if(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)){
+            Move(new Vector2Int(0, -1));
+        }
+        
+        
+            
+    }
     
     private void Fall(){
         fallTimer = 0.0f;
@@ -167,6 +138,7 @@ public class Piece : MonoBehaviour
         {
             Position = newPosition;
             lockTime = 0f; // reset
+            moveTimer = 0.0f;
         }
 
         return valid;
