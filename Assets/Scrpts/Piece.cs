@@ -1,12 +1,13 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class Piece : MonoBehaviour
 {
     public Board Board { get; private set; }
     public Vector3Int Position; //{ get; private set; }
-    public TetrominoData Data { get; private set; }
+    public TetrominoData data { get; private set; }
     public Vector3Int[] Cells { get; private set; }
     
 
@@ -23,11 +24,15 @@ public class Piece : MonoBehaviour
     public float lockLimit;
     private bool isLocked;
 
-    public void Initialize(Board board, Vector3Int position, TetrominoData data)
+    //For rotations
+    private int rotationIndex;
+    private bool canRotate;
+
+    public void Initialize(Board board, Vector3Int position, TetrominoData d)
     {
         Board = board;
         Position = position;
-        Data = data;
+        data = d;
 
         Cells ??= new Vector3Int[data.Cells.Length];
 
@@ -45,6 +50,8 @@ public class Piece : MonoBehaviour
         lockTime = 0.0f;
         lockLimit = 0.5f;
 
+        rotationIndex = 0;
+        canRotate = true;
 
     }
 
@@ -67,7 +74,7 @@ public class Piece : MonoBehaviour
                 //Same as with the pause menu.
                 //It checks if it has moved in the same key-press.
                 if(canRight){
-                    Right();
+                    Move(new Vector2Int(1, 0));
                 }
                 canRight = false;
             }
@@ -76,7 +83,7 @@ public class Piece : MonoBehaviour
             }
             if(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)){
                 if(canLeft){
-                    Left();
+                    Move(new Vector2Int(-1, 0));
                 }
                 canLeft = false;
             }
@@ -85,7 +92,7 @@ public class Piece : MonoBehaviour
             }
             if(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)){
                 if(canDown){
-                    Down();
+                    Move(new Vector2Int(0, -1));
                 }
                 canDown = false;            
             }
@@ -101,7 +108,16 @@ public class Piece : MonoBehaviour
             else{
                 canHardDown = true;
             }
-
+            if(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)){
+                if(canRotate)
+                {
+                    Rotate(1);
+                }
+                canRotate = false;
+            }
+            else{
+                canRotate = true;
+            }
             
             
             //Now that we have moved (or not) the piece, it draws it in the board.
@@ -138,26 +154,99 @@ public class Piece : MonoBehaviour
         return false;
     }
 
-    private void Right(){
-        //Checks if the piece would collide with the limits, bottom or another piece. If it doesn't, it moves.
-        Vector3Int newpos = new Vector3Int(Position.x + 1, Position.y, Position.z);
-        if(this.Board.IsValidPosition(this, newpos)){
-            Position = newpos;
-            lockTime = 0.0f;
-        }
-    }
+    private bool Move(Vector2Int translation)
+    {
+        Vector3Int newPosition = this.Position;
+        newPosition.x += translation.x;
+        newPosition.y += translation.y;
 
-    private void Left(){
-        Vector3Int newpos = new Vector3Int(Position.x - 1, Position.y, Position.z);
-        if(this.Board.IsValidPosition(this, newpos)){
-            Position = newpos;
-            lockTime = 0.0f;
-        }
-    }
+        bool valid = Board.IsValidPosition(this, newPosition);
 
+        // Only save the movement if the new position is valid
+        if (valid)
+        {
+            Position = newPosition;
+            lockTime = 0f; // reset
+        }
+
+        return valid;
+    }
     private void Lock(){
         this.Board.Set(this);
         this.Board.CheckLine();
         this.Board.SpawnPiece();
     }
+
+    private void Rotate(int direction){
+
+        int originalRotation = this.rotationIndex;
+        this.rotationIndex += Wrap(this.rotationIndex+direction, 0, 4);
+
+        ApplyRotationMatrix(direction);
+
+        if(!TestWallKicks(this.rotationIndex, direction)){
+            this.rotationIndex = originalRotation;
+            ApplyRotationMatrix(-direction);
+        }
+
+        
+    }
+
+    private void ApplyRotationMatrix(int direction){
+
+        for(int i = 0; i < this.data.Cells.Length; i++){
+            Vector3 cell = this.Cells[i];
+            int x, y;
+
+            switch(this.data.tetromino)
+            {
+                case Tetromino.I:
+                case Tetromino.O:
+                    cell.x -= 0.5f;
+                    cell.y -= 0.5f;
+                    x = Mathf.CeilToInt((cell.x * Data.RotationMatrix[0] * direction) + (cell.y * Data.RotationMatrix[1]*direction));
+                    y = Mathf.CeilToInt((cell.x * Data.RotationMatrix[2] * direction) + (cell.y * Data.RotationMatrix[3]*direction));
+                    break;
+                default:
+                    x = Mathf.RoundToInt((cell.x * Data.RotationMatrix[0] * direction) + (cell.y * Data.RotationMatrix[1]*direction));
+                    y = Mathf.RoundToInt((cell.x * Data.RotationMatrix[2] * direction) + (cell.y * Data.RotationMatrix[3]*direction));
+                    break;
+            }
+            this.Cells[i] = new Vector3Int(x, y, 0);
+        }
+    }
+
+    private bool TestWallKicks(int rotationIndex, int rotationDirection){
+        int wallKickIndex = rotationIndex*2;
+
+        for (int i = 0; i < this.data.wallKicks.GetLength(1); i++){
+            Vector2Int translation = this.data.wallKicks[wallKickIndex, i];
+
+             if (Move(translation)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    private int GetWallKickIndex(int rotationIndex, int rotationDirection){
+        int wallKickIndex = rotationIndex*2;
+
+        if (rotationDirection < 0){
+            wallKickIndex--;
+        }
+
+        return Wrap(wallKickIndex, 0, this.data.wallKicks.GetLength(0));
+    }
+
+    private int Wrap(int input, int min, int max){
+        if(input<min){
+            return max - (min-input)%(max-min);
+        }
+        else{
+            return min + (input-min) %(max-min);
+        }
+    }
+
 }

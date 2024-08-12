@@ -16,6 +16,7 @@ public enum Tetromino
 public struct TetrominoData
 {
     public Vector2Int[] Cells { get; private set; }
+    public Vector2Int[,] wallKicks { get; private set; }
 
     public Tetromino tetromino;
     public Tile tile;
@@ -23,5 +24,6 @@ public struct TetrominoData
     public void Initialize()
     {
         Cells = Data.Cells[tetromino];
+        wallKicks = Data.WallKicks[tetromino];
     }
 }

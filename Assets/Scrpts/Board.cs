@@ -52,7 +52,7 @@ public class Board : MonoBehaviour
         for (int i = 0; i < piece.Cells.Length; i++)
         {
             Vector3Int tilePosition = piece.Cells[i] + piece.Position;
-            Tilemap.SetTile(tilePosition, piece.Data.tile);
+            Tilemap.SetTile(tilePosition, piece.data.tile);
         }
     }
 
