@@ -84,4 +84,54 @@ public class Board : MonoBehaviour
         }
         return true;
     }
+
+    public void CheckLine(){
+        RectInt bounds = this.Bounds;
+        int row = bounds.yMin;
+        //Checks every row
+        while(row<bounds.yMax){
+            if(IsLineFull(row))
+            {
+                EreaseLine(row);
+            }
+            else
+            {
+                //It only moves of row if it's not full because if it is, the upper row will come down and we have to check the same row again
+                row++;
+            }
+        }
+    }
+
+    //Checks if the current row is full (all cells have a tile) and returns true if it is.  Otherwise, returns false.
+    private bool IsLineFull(int row){
+        RectInt bounds = this.Bounds;
+        for(int col=bounds.xMin; col < bounds.xMax; col++){
+            Vector3Int position = new Vector3Int(col, row, 0);
+
+            if(!this.Tilemap.HasTile(position)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //Erases the current row and moves all other rows down by one row.
+    private void EreaseLine(int row){
+        //First ereases all the cells from the full row
+        for(int col=Bounds.xMin; col < Bounds.xMax; col++)
+        {
+            Vector3Int tilePosition = new Vector3Int(col, row, 0);
+            this.Tilemap.SetTile(tilePosition, null);
+        }
+        //Then moves all the other rows down by one
+        for(int r = row; r < Bounds.yMax; r++){
+            for(int col=Bounds.xMin; col < Bounds.xMax; col++)
+            {
+            Vector3Int tilePosition = new Vector3Int(col, r, 0);
+            Vector3Int upperPosition = new Vector3Int(col, r+1, 0);
+            this.Tilemap.SetTile(tilePosition, this.Tilemap.GetTile(upperPosition));
+            }
+        }
+    }
+
 }

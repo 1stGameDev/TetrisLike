@@ -13,14 +13,15 @@ public class Piece : MonoBehaviour
 
 
     //For moving the pice:
-    public float fallTime = 1.0f;
-    private float timer = 0.0f;
-    private bool canRight = true;
-    private bool canLeft = true;
-    private bool canDown = true;
-    private bool canHardDown = true;
-    private int lockCount = 0;
-    private bool isLocked = false;
+    public float fallTime;
+    private float fallTimer;
+    private bool canRight;
+    private bool canLeft;
+    private bool canDown;
+    private bool canHardDown;
+    private float lockTime;
+    public float lockLimit;
+    private bool isLocked;
 
     public void Initialize(Board board, Vector3Int position, TetrominoData data)
     {
@@ -35,13 +36,14 @@ public class Piece : MonoBehaviour
             Cells[i] = (Vector3Int)data.Cells[i];
         }
 
-        timer = 0.0f;
+        fallTimer = 0.0f;
         canRight = true;
         canLeft = true;
         canDown = true;
         canHardDown = true;
-        lockCount = 0;
         isLocked = false;
+        lockTime = 0.0f;
+        lockLimit = 0.5f;
 
 
     }
@@ -52,16 +54,12 @@ public class Piece : MonoBehaviour
         if(!isLocked){
             this.Board.Clear(this);
 
-
-            int fall = Fall(Time.deltaTime);
-            if(fall == 0){
-                lockCount++;
-            }
-            else if(fall == 1){
-                lockCount--;
-                if(lockCount < 0){
-                    lockCount = 0;
-                }
+            //If the time since the last Fall is greater than fallTime, it falls.
+            fallTimer += Time.deltaTime;
+            lockTime += Time.deltaTime;
+            if(fallTimer >= fallTime)
+            {
+                Fall();
             }
 
             //Second try to move the pieces sideways (without using Unity's new Input system)
@@ -104,50 +102,40 @@ public class Piece : MonoBehaviour
                 canHardDown = true;
             }
 
+            
+            
             //Now that we have moved (or not) the piece, it draws it in the board.
             this.Board.Set(this);
-
-            if(lockCount >= 2){
-                isLocked = true;
-                this.Board.SpawnPiece();
-            }
         }
     }
 
-    //Works the same as the movement but with the added feature of the delta.
-    //delta controls how quicly it falls.
-    private int Fall(float delta){
-        timer += delta;
-        if(timer >= fallTime){
-            bool ret = Down();
-            timer = 0.0f;
-            if(ret){
-                return 1;
-            }
-            else{
-                return 0;
-            }
-        }
-        else{
-            return 2;
+    
+    private void Fall(){
+        fallTimer = 0.0f;
+        Down();
+        //If the time since the last movement is greater than lockLimit, it lock the piece.
+        //lockTime gets setted to 0 everytime the piece moves.
+        if(lockTime >= lockLimit){
+            Lock();
         }
     }
-
 
     private void HardDown(){
         while(Down()){
 
         }
+        Lock();
     }
+    
     private bool Down(){
         Vector3Int newpos = new Vector3Int(Position.x, Position.y - 1, Position.z);
             if(this.Board.IsValidPosition(this, newpos)){
                 Position = newpos;
+                fallTimer = 0.0f;
+                lockTime = 0.0f;
                 return true;
             }
-            else{
-                return false;
-            }
+        return false;
     }
 
     private void Right(){
@@ -155,6 +143,7 @@ public class Piece : MonoBehaviour
         Vector3Int newpos = new Vector3Int(Position.x + 1, Position.y, Position.z);
         if(this.Board.IsValidPosition(this, newpos)){
             Position = newpos;
+            lockTime = 0.0f;
         }
     }
 
@@ -162,6 +151,13 @@ public class Piece : MonoBehaviour
         Vector3Int newpos = new Vector3Int(Position.x - 1, Position.y, Position.z);
         if(this.Board.IsValidPosition(this, newpos)){
             Position = newpos;
+            lockTime = 0.0f;
         }
+    }
+
+    private void Lock(){
+        this.Board.Set(this);
+        this.Board.CheckLine();
+        this.Board.SpawnPiece();
     }
 }
