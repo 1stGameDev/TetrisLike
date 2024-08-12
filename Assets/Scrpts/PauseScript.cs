@@ -8,7 +8,9 @@ public class PauseScript : MonoBehaviour
     //Lets me refer to the panel in this script
     public GameObject PausePanel;
 
-    public static bool GameIsPaused;
+    private static bool GameIsPaused;
+
+    private static bool canPause;
    
    //When the game starts the canvas is not active, meaning it is invisible
    void Start()
@@ -16,19 +18,29 @@ public class PauseScript : MonoBehaviour
      PausePanel.SetActive(false);
      GameIsPaused = false;
      Time.timeScale = 1f;
+     canPause = true;
    }
 void Update()
 {
-
-if (Input.GetKeyDown(KeyCode.Escape))
+if (Input.GetKey(KeyCode.Escape) )
 {
-    if (GameIsPaused)
+    //If esc is pressed it checks if it has paused (or unpaused) with the same key-press
+    //If it hasn't --> it pauses. If it has--> does nothing.
+    if(canPause == true)
     {
-        Resume();
-    } else
-    {
-        Pause();
+        if (GameIsPaused)
+        {
+            Resume();
+        } else
+        {
+            Pause();
+        }
     }
+    canPause = false;
+}
+else{
+    //If esc is not pressed, you can pause again
+    canPause = true;
 }
 }
 
